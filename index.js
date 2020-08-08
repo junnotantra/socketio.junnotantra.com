@@ -1,6 +1,11 @@
 var app = require('express')();
 var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {
+  pingInterval: 10000,
+  pingTimeout: 5000,
+  allowUpgrades: true,
+  transports: ['polling', 'websocket']
+});
 
 var roomCapacity = 2;
 
