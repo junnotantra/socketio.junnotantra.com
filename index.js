@@ -16,8 +16,13 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   socket.on('room', (room) => {
     if (typeof socket.adapter.rooms[room] == 'undefined' || socket.adapter.rooms[room].length < roomCapacity) {
+      // join room
       socket.join(room);
+
+      // send notif to user
       io.to(socket.id).emit('notif', 'Connected')
+
+      // send notif to room
       var notif = socket.adapter.rooms[room].length + ' user(s) has joined room'
       io.to(room).emit('notif', notif)
 
@@ -27,6 +32,14 @@ io.on('connection', (socket) => {
 
       socket.on('event', (msg) => {
         io.to(room).emit('event', msg);
+      });
+
+      socket.on('input', (msg) => {
+        io.to(room).emit('input', msg);
+      });
+
+      socket.on('render', (msg) => {
+        io.to(room).emit('render', msg);
       });
 
       socket.on('disconnect', () => {
